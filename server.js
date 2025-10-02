@@ -1,26 +1,43 @@
+const express = require("express");
+const { MongoClient, ServerApiVersion } = require("mongodb");
 
-const { MongoClient, ServerApiVersion } = require('mongodb');
-const uri = "mongodb+srv://david2004:david2004@cluster0.w9erdki.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
+const app = express();
+const PORT = process.env.PORT || 3000;
 
-// Create a MongoClient with a MongoClientOptions object to set the Stable API version
+// ⚠️ Usa variable de entorno en Render, no la pongas fija
+const uri = process.env.MONGO_URI;
+
 const client = new MongoClient(uri, {
   serverApi: {
     version: ServerApiVersion.v1,
     strict: true,
     deprecationErrors: true,
-  }
+  },
 });
 
-async function run() {
+async function startServer() {
   try {
-    // Connect the client to the server	(optional starting in v4.7)
+    // Conectar a MongoDB
     await client.connect();
-    // Send a ping to confirm a successful connection
+    console.log("✅ Conectado a MongoDB Atlas");
+
+    // Probar la conexión con ping
     await client.db("admin").command({ ping: 1 });
-    console.log("Pinged your deployment. You successfully connected to MongoDB!");
-  } finally {
-    // Ensures that the client will close when you finish/error
-    await client.close();
+    console.log("Pinged your deployment. Successfully connected to MongoDB!");
+
+    // Definir una ruta básica
+    app.get("/", (req, res) => {
+      res.send("🚀 Servidor Express corriendo y conectado a MongoDB Atlas");
+    });
+
+    // Iniciar el servidor
+    app.listen(PORT, () => {
+      console.log(`Servidor corriendo en puerto ${PORT}`);
+    });
+  } catch (err) {
+    console.error("❌ Error al conectar a MongoDB:", err);
+    process.exit(1);
   }
 }
-run().catch(console.dir);
+
+startServer();
