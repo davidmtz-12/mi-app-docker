@@ -10,6 +10,7 @@ COPY package.json yarn.lock .yarnrc.yml ./
 
 # Instalar dependencias con Yarn (esto creará node_modules)
 RUN yarn install --immutable
+Run yarn install mongodb
 
 # Copiar el resto del proyecto
 COPY . .
