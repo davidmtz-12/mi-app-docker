@@ -1,23 +1,19 @@
 FROM node:20
 
 # Habilitar Corepack para Yarn
-RUN corepack enable
+RUN corepack enable && corepack prepare yarn@stable --activate
 
-# Crear directorio de trabajo
 WORKDIR /usr/src/app
 
-# Copiar archivos de configuración primero
+# Copiar archivos de configuración
 COPY package.json yarn.lock .yarnrc.yml ./
-COPY .yarn ./.yarn
 
-# Instalar dependencias con Yarn
+# Instalar dependencias con Yarn (esto creará node_modules)
 RUN yarn install --immutable
 
-# Copiar el resto del código
+# Copiar el resto del proyecto
 COPY . .
 
-# Exponer puerto (Render usa $PORT automáticamente)
 EXPOSE 3000
 
-# Comando de inicio
 CMD ["yarn", "start"]
